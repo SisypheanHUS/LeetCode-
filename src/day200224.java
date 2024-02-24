@@ -4,8 +4,8 @@ public class day200224 {
         public int missingNumber(int[] nums) {
             int sumOfArray = (nums.length * (nums.length + 1)) / 2;
             int realSum = 0;
-            for (int i = 0; i < nums.length; i++) {
-                realSum += nums[i];
+            for (int num : nums) {
+                realSum += num;
             }
 
             return sumOfArray - realSum;
