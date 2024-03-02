@@ -2,7 +2,7 @@ import java.util.Arrays;
 class Solution {
     public int[] sortArray(int[] nums) {
         return mergeSort(nums,0,nums.length-1);
-    }
+    }//
 
     public static int[] mergeSort(int[] array,int L,int R){
         //chia ra 
