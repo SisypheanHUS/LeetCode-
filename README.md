@@ -4,4 +4,4 @@ Welcome to my LeetCode problem archive! This collection contains my solutions to
 
 Feel free to explore the archive and see how I approached different problems. If you have any questions or suggestions, please let me know!
 
-Dinh (James) Thai Tuan 
+Tuan (James) Dinh Thai
