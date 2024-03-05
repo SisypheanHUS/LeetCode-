@@ -6,6 +6,5 @@ public class question283 {
                     newarr[num] = num;
                 }
             }
-            return newarr;
         }
 }
