@@ -27,7 +27,7 @@ public class contest10032024ques3 {
         return true;
     }
 
-    public String[] shortestSubstrings(String[] arr) {
+    public String[] shortestUniqueSubstrings(String[] arr) {
         String[] answer = new String[arr.length];
         Arrays.fill(answer, "");
 
