@@ -12,7 +12,7 @@ public class question707 {
         }
     }
 
-    public MyLinkedList() {
+    public void MyLinkedList() {
         this.head = null;
         this.length = 0;
     }
