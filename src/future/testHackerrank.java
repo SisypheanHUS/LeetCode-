@@ -1,3 +1,5 @@
+package future;
+
 public class testHackerrank {
     public static String decryptMessage(String encryptedMessage) {
         String[] words = encryptedMessage.split(" ");
