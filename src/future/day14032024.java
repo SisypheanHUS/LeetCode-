@@ -1,3 +1,5 @@
+package future;
+
 public class day14032024 {
 
         public int numSubarraysWithSum(int[] nums, int goal) {

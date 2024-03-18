@@ -1,3 +1,5 @@
+package future;
+
 public class question7 {
     public int reverse(int x) {
         long t = Math.abs((long)x);

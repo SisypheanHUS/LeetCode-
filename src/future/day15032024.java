@@ -1,3 +1,5 @@
+package future;
+
 public class day15032024 {
     public int[] productExceptSelf(int[] nums) {
         int[] res = new int[nums.length];
