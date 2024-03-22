@@ -7,7 +7,7 @@ public class day21032022 {
         ListNode node2 = new ListNode(2);
         ListNode node3 = new ListNode(3);
         ListNode node4 = new ListNode(4);
-        private double
+
         ListNode node5 = new ListNode(5);
 
         // Step 3: Link the ListNode objects together to form a linked list
