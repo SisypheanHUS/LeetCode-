@@ -4,51 +4,45 @@ import java.util.Stack;
 
 public class FormulaEval {
     public double eval(String formula) {
-        Stack<Double> values = new Stack<>();
-        Stack<Character> ops = new Stack<>();
+        double[] values = new double[formula.length()];
+        char[] ops = new char[formula.length()];
+        int valIndex = 0, opsIndex = 0;
 
         for (int i = 0; i < formula.length(); i++) {
             char c = formula.charAt(i);
 
-            // If the character is a digit, parse the number
             if (Character.isDigit(c)) {
                 StringBuilder sb = new StringBuilder();
                 while (i < formula.length() && (Character.isDigit(formula.charAt(i)) || formula.charAt(i) == '.')) {
                     sb.append(formula.charAt(i++));
                 }
-                values.push(Double.parseDouble(sb.toString()));
-                i--; // Adjust the index after the inner loop
-            }
-            // If the character is '(', push it to ops stack
-            else if (c == '(') {
-                ops.push(c);
-            }
-            // If the character is ')', solve the entire bracket
-            else if (c == ')') {
-                while (ops.peek() != '(') {
-                    values.push(applyOp(ops.pop(), values.pop(), values.pop()));
+                values[valIndex++] = Double.parseDouble(sb.toString());
+                i--;
+            } else if (c == '(') {
+                ops[opsIndex++] = c;
+            } else if (c == ')') {
+                while (ops[opsIndex - 1] != '(') {
+                    values[valIndex - 2] = applyOp(ops[--opsIndex], values[valIndex - 2], values[valIndex - 1]);
+                    valIndex--;
                 }
-                ops.pop(); // Remove '(' from ops stack
-            }
-            // If the character is an operator
-            else if (c == '+' || c == '-' || c == '*' || c == '/') {
-                while (!ops.isEmpty() && hasPrecedence(c, ops.peek())) {
-                    values.push(applyOp(ops.pop(), values.pop(), values.pop()));
+                opsIndex--;
+            } else if (c == '+' || c == '-' || c == '*' || c == '/') {
+                while (opsIndex > 0 && hasPrecedence(c, ops[opsIndex - 1])) {
+                    values[valIndex - 2] = applyOp(ops[--opsIndex], values[valIndex - 2], values[valIndex - 1]);
+                    valIndex--;
                 }
-                ops.push(c);
+                ops[opsIndex++] = c;
             }
         }
 
-        // Apply remaining ops to remaining values
-        while (!ops.isEmpty()) {
-            values.push(applyOp(ops.pop(), values.pop(), values.pop()));
+        while (opsIndex > 0) {
+            values[valIndex - 2] = applyOp(ops[--opsIndex], values[valIndex - 2], values[valIndex - 1]);
+            valIndex--;
         }
 
-        // The final value is the result
-        return values.pop();
+        return values[0];
     }
 
-    // Check if op2 has higher or same precedence as op1
     private boolean hasPrecedence(char op1, char op2) {
         if (op2 == '(' || op2 == ')') {
             return false;
@@ -59,7 +53,6 @@ public class FormulaEval {
         return true;
     }
 
-    // Apply the operator to two operands
     private double applyOp(char op, double b, double a) {
         switch (op) {
             case '+':
