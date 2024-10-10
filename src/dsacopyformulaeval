@@ -1,0 +1,87 @@
+package dsa10thang10;
+
+import java.util.Stack;
+
+public class FormulaEval {
+    public double eval(String formula) {
+        Stack<Double> values = new Stack<>();
+        Stack<Character> ops = new Stack<>();
+
+        for (int i = 0; i < formula.length(); i++) {
+            char c = formula.charAt(i);
+
+            // If the character is a digit, parse the number
+            if (Character.isDigit(c)) {
+                StringBuilder sb = new StringBuilder();
+                while (i < formula.length() && (Character.isDigit(formula.charAt(i)) || formula.charAt(i) == '.')) {
+                    sb.append(formula.charAt(i++));
+                }
+                values.push(Double.parseDouble(sb.toString()));
+                i--; // Adjust the index after the inner loop
+            }
+            // If the character is '(', push it to ops stack
+            else if (c == '(') {
+                ops.push(c);
+            }
+            // If the character is ')', solve the entire bracket
+            else if (c == ')') {
+                while (ops.peek() != '(') {
+                    values.push(applyOp(ops.pop(), values.pop(), values.pop()));
+                }
+                ops.pop(); // Remove '(' from ops stack
+            }
+            // If the character is an operator
+            else if (c == '+' || c == '-' || c == '*' || c == '/') {
+                while (!ops.isEmpty() && hasPrecedence(c, ops.peek())) {
+                    values.push(applyOp(ops.pop(), values.pop(), values.pop()));
+                }
+                ops.push(c);
+            }
+        }
+
+        // Apply remaining ops to remaining values
+        while (!ops.isEmpty()) {
+            values.push(applyOp(ops.pop(), values.pop(), values.pop()));
+        }
+
+        // The final value is the result
+        return values.pop();
+    }
+
+    // Check if op2 has higher or same precedence as op1
+    private boolean hasPrecedence(char op1, char op2) {
+        if (op2 == '(' || op2 == ')') {
+            return false;
+        }
+        if ((op1 == '*' || op1 == '/') && (op2 == '+' || op2 == '-')) {
+            return false;
+        }
+        return true;
+    }
+
+    // Apply the operator to two operands
+    private double applyOp(char op, double b, double a) {
+        switch (op) {
+            case '+':
+                return a + b;
+            case '-':
+                return a - b;
+            case '*':
+                return a * b;
+            case '/':
+                if (b == 0) {
+                    throw new UnsupportedOperationException("Cannot divide by zero");
+                }
+                return a / b;
+        }
+        return 0;
+    }
+
+    public static void main(String[] args) {
+        FormulaEval evaluator = new FormulaEval();
+        System.out.println(evaluator.eval("10 + 2 * 6")); // 22.0
+        System.out.println(evaluator.eval("100 * 2 + 12")); // 212.0
+        System.out.println(evaluator.eval("100 * ( 2 + 12 )")); // 1400.0
+        System.out.println(evaluator.eval("100 * ( 2 + 12 ) / 14")); // 100.0
+    }
+}
