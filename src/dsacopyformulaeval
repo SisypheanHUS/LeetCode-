@@ -4,9 +4,8 @@ import java.util.Stack;
 
 public class FormulaEval {
     public double eval(String formula) {
-        double[] values = new double[formula.length()];
-        char[] ops = new char[formula.length()];
-        int valIndex = 0, opsIndex = 0;
+        Stack<Double> values = new Stack<>();
+        Stack<Character> ops = new Stack<>();
 
         for (int i = 0; i < formula.length(); i++) {
             char c = formula.charAt(i);
@@ -16,31 +15,31 @@ public class FormulaEval {
                 while (i < formula.length() && (Character.isDigit(formula.charAt(i)) || formula.charAt(i) == '.')) {
                     sb.append(formula.charAt(i++));
                 }
-                values[valIndex++] = Double.parseDouble(sb.toString());
-                i--;
-            } else if (c == '(') {
-                ops[opsIndex++] = c;
-            } else if (c == ')') {
-                while (ops[opsIndex - 1] != '(') {
-                    values[valIndex - 2] = applyOp(ops[--opsIndex], values[valIndex - 2], values[valIndex - 1]);
-                    valIndex--;
+                values.push(Double.parseDouble(sb.toString()));
+                i--; 
+            }
+            else if (c == '(') {
+                ops.push(c);
+            }
+            else if (c == ')') {
+                while (ops.peek() != '(') {
+                    values.push(applyOp(ops.pop(), values.pop(), values.pop()));
                 }
-                opsIndex--;
-            } else if (c == '+' || c == '-' || c == '*' || c == '/') {
-                while (opsIndex > 0 && hasPrecedence(c, ops[opsIndex - 1])) {
-                    values[valIndex - 2] = applyOp(ops[--opsIndex], values[valIndex - 2], values[valIndex - 1]);
-                    valIndex--;
+                ops.pop(); // Remove '(' from ops stack
+            }
+            else if (c == '+' || c == '-' || c == '*' || c == '/') {
+                while (!ops.isEmpty() && hasPrecedence(c, ops.peek())) {
+                    values.push(applyOp(ops.pop(), values.pop(), values.pop()));
                 }
-                ops[opsIndex++] = c;
+                ops.push(c);
             }
         }
 
-        while (opsIndex > 0) {
-            values[valIndex - 2] = applyOp(ops[--opsIndex], values[valIndex - 2], values[valIndex - 1]);
-            valIndex--;
+        while (!ops.isEmpty()) {
+            values.push(applyOp(ops.pop(), values.pop(), values.pop()));
         }
 
-        return values[0];
+        return values.pop();
     }
 
     private boolean hasPrecedence(char op1, char op2) {
