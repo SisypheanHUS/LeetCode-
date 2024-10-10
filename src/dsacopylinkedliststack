@@ -1,0 +1,72 @@
+package dsa10thang10;
+
+import java.util.Iterator;
+import java.util.NoSuchElementException;
+
+public class LinkedListStack<E> implements StackInterface<E> {
+    private class Node {
+        E element;
+        Node next;
+
+        Node(E element) {
+            this.element = element;
+            this.next = null;
+        }
+    }
+
+    private Node stack = null;
+
+    @Override
+    public void push(E element) {
+        Node newNode = new Node(element);
+        newNode.next = stack;
+        stack = newNode;
+    }
+
+    @Override
+    public E pop() {
+        if (isEmpty()) {
+            throw new NoSuchElementException("Stack is empty");
+        }
+        E element = stack.element;
+        stack = stack.next;
+        return element;
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return stack == null;
+    }
+
+    @Override
+    public E top() {
+        if (isEmpty()) {
+            throw new NoSuchElementException("Stack is empty");
+        }
+        return stack.element;
+    }
+
+    @Override
+    public Iterator<E> iterator() {
+        return new StackIterator();
+    }
+
+    private class StackIterator implements Iterator<E> {
+        private Node currentNode = stack;
+
+        @Override
+        public boolean hasNext() {
+            return currentNode != null;
+        }
+
+        @Override
+        public E next() {
+            if (!hasNext()) {
+                throw new NoSuchElementException();
+            }
+            E data = currentNode.element;
+            currentNode = currentNode.next;
+            return data;
+        }
+    }
+}
