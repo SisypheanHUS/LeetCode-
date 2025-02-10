@@ -1,62 +1,79 @@
-public double eval(String formula) {
-        Stack<Double> values = new Stack<>();
-        Stack<Character> ops = new Stack<>();
+Here’s a cleaner, more readable version of your sorting benchmark program:
 
-        for (int i = 0; i < formula.length(); i++) {
-            char c = formula.charAt(i);
+import time
+import random
 
-            if (Character.isDigit(c)) {
-                StringBuilder sb = new StringBuilder();
-                while (i < formula.length() && (Character.isDigit(formula.charAt(i)) || formula.charAt(i) == '.')) {
-                    sb.append(formula.charAt(i++));
-                }
-                values.push(Double.parseDouble(sb.toString()));
-                i--;
-            } else if (c == '(') {
-                ops.push(c);
-            } else if (c == ')') {
-                while (ops.peek() != '(') {
-                    values.push(applyOp(ops.pop(), values.pop(), values.pop()));
-                }
-                ops.pop();
-            } else if (c == '+' || c == '-' || c == '*' || c == '/') {
-                while (!ops.isEmpty() && hasPrecedence(c, ops.peek())) {
-                    values.push(applyOp(ops.pop(), values.pop(), values.pop()));
-                }
-                ops.push(c);
-            }
-        }
+# Define sorting algorithms
+def bubble_sort(arr):
+    n = len(arr)
+    for i in range(n):
+        for j in range(n - i - 1):
+            if arr[j] > arr[j + 1]:
+                arr[j], arr[j + 1] = arr[j + 1], arr[j]
 
-        while (!ops.isEmpty()) {
-            values.push(applyOp(ops.pop(), values.pop(), values.pop()));
-        }
+def insertion_sort(arr):
+    for i in range(1, len(arr)):
+        key, j = arr[i], i - 1
+        while j >= 0 and arr[j] > key:
+            arr[j + 1] = arr[j]
+            j -= 1
+        arr[j + 1] = key
 
-        return values.pop();
-    }
+def merge_sort(arr):
+    if len(arr) <= 1:
+        return arr
+    mid = len(arr) // 2
+    left, right = merge_sort(arr[:mid]), merge_sort(arr[mid:])
+    return merge(left, right)
 
-    private boolean hasPrecedence(char op1, char op2) {
-        if (op2 == '(' || op2 == ')') {
-            return false;
-        }
-        if ((op1 == '*' || op1 == '/') && (op2 == '+' || op2 == '-')) {
-            return false;
-        }
-        return true;
-    }
+def merge(left, right):
+    result, i, j = [], 0, 0
+    while i < len(left) and j < len(right):
+        result.append(left[i] if left[i] < right[j] else right[j])
+        i, j = (i + 1, j) if left[i] < right[j] else (i, j + 1)
+    return result + left[i:] + right[j:]
 
-    private double applyOp(char op, double b, double a) {
-        switch (op) {
-            case '+':
-                return a + b;
-            case '-':
-                return a - b;
-            case '*':
-                return a * b;
-            case '/':
-                if (b == 0) {
-                    throw new UnsupportedOperationException("Cannot divide by zero");
-                }
-                return a / b;
-        }
-        return 0;
-    }
+def quick_sort(arr):
+    if len(arr) <= 1:
+        return arr
+    pivot = arr[len(arr) // 2]
+    left = [x for x in arr if x < pivot]
+    middle = [x for x in arr if x == pivot]
+    right = [x for x in arr if x > pivot]
+    return quick_sort(left) + middle + quick_sort(right)
+
+# Measure execution time
+def measure_time(sort_func, arr):
+    start = time.time()
+    sorted_arr = sort_func(arr[:]) if sort_func in [merge_sort, quick_sort] else sort_func(arr[:])
+    return time.time() - start
+
+# Test sorting performance
+sizes = [10, 100, 1000, 10000, 100000]
+algorithms = {"Bubble Sort": bubble_sort, "Insertion Sort": insertion_sort, 
+              "Merge Sort": merge_sort, "Quick Sort": quick_sort}
+
+for size in sizes:
+    print(f"\nSize: {size}")
+    arr = [random.randint(0, 100000) for _ in range(size)]
+    for name, func in algorithms.items():
+        if size > 10000 and name in ["Bubble Sort", "Insertion Sort"]:
+            print(f"{name}: Skipped (too slow)")
+            continue
+        print(f"{name}: {measure_time(func, arr):.6f} sec")
+
+Key Improvements:
+
+More concise function definitions: Eliminated redundant loops and conditions.
+
+Simpler merge function: Uses a clean while loop and list concatenation.
+
+Cleaner function calls: Avoids modifying the original array.
+
+Skips slow algorithms for large inputs in a clear way.
+
+Improved readability with consistent formatting and structure.
+
+
+This version is easier to read while maintaining all functionalities!
+
